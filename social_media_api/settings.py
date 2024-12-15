@@ -11,26 +11,40 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 
 import environ
+import os
+
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 env = environ.Env()
-environ.Env.read_env()  # Reads from a .env file
+#environ.Env.read_env()  # Reads from a .env file
+environ.Env.read_env(os.path.join(BASE_DIR, '.env'))
 
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+#environ.Env.read_env(os.path.join(BASE_DIR, ".env"))
+
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
+
+# Debugging line to check if .env is read
+print("Environment Variables: ", env.ENVIRON)
+
 SECRET_KEY = env('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = env('DEBUG')
 
-ALLOWED_HOSTS = ['your-domain.com', 'your-server-ip']
+print("Loaded Environment Variables: ", env.ENVIRON)
+
+DEBUG = DEBUG = env.bool('DEBUG', default=False)
+
+
+ALLOWED_HOSTS = ['127.0.0.1', 'localhost']
 
 
 SECURE_BROWSER_XSS_FILTER = True
@@ -102,18 +116,14 @@ PORT = os.getenv('PORT', '8000')  # Default to 8000 for local development
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
 DATABASES = {
-    #'default': {
-     #   'ENGINE': 'django.db.backends.sqlite3',
-      #  'NAME': BASE_DIR / 'db.sqlite3',
-    #}
-
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': env('DB_NAME'),
         'USER': env('DB_USER'),
+        'USER': env('DB_USER', default='social_user'),
         'PASSWORD': env('DB_PASSWORD'),
-        'HOST': env('DB_HOST'),
-        'PORT': env('DB_PORT'),
+        'HOST': env('DB_HOST', default='localhost'),
+        'PORT': env('DB_PORT', default=5432),
         }
 }
 
